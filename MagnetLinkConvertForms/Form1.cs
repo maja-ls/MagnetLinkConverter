@@ -109,5 +109,23 @@ namespace MagnetLinkConverter
             SaveSettings();
 
         }
+
+        private void btnOpenMagnetPath_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(MagnetPath))
+                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @MagnetPath);
+        }
+
+        private void btnOpenTorrentFilePath_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(TorrentPath))
+                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @TorrentPath);
+        }
+
+        private void btnOpenDownloadingPath_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(DownloadPath))
+                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @DownloadPath);
+        }
     }
 }

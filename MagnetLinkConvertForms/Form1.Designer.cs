@@ -38,11 +38,14 @@ namespace MagnetLinkConverter
             this.txtbox_torrentpath = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.txtbox_downloadpath = new System.Windows.Forms.TextBox();
+            this.btnOpenMagnetPath = new System.Windows.Forms.Button();
+            this.btnOpenTorrentFilePath = new System.Windows.Forms.Button();
+            this.btnOpenDownloadingPath = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btn_magnetpath
             // 
-            this.btn_magnetpath.Location = new System.Drawing.Point(432, 45);
+            this.btn_magnetpath.Location = new System.Drawing.Point(416, 28);
             this.btn_magnetpath.Name = "btn_magnetpath";
             this.btn_magnetpath.Size = new System.Drawing.Size(75, 23);
             this.btn_magnetpath.TabIndex = 0;
@@ -52,7 +55,7 @@ namespace MagnetLinkConverter
             // 
             // btn_torrentpath
             // 
-            this.btn_torrentpath.Location = new System.Drawing.Point(432, 102);
+            this.btn_torrentpath.Location = new System.Drawing.Point(416, 85);
             this.btn_torrentpath.Name = "btn_torrentpath";
             this.btn_torrentpath.Size = new System.Drawing.Size(75, 23);
             this.btn_torrentpath.TabIndex = 1;
@@ -62,7 +65,7 @@ namespace MagnetLinkConverter
             // 
             // btn_downloadpath
             // 
-            this.btn_downloadpath.Location = new System.Drawing.Point(432, 161);
+            this.btn_downloadpath.Location = new System.Drawing.Point(416, 144);
             this.btn_downloadpath.Name = "btn_downloadpath";
             this.btn_downloadpath.Size = new System.Drawing.Size(75, 23);
             this.btn_downloadpath.TabIndex = 2;
@@ -72,7 +75,7 @@ namespace MagnetLinkConverter
             // 
             // txtbox_magnetpath
             // 
-            this.txtbox_magnetpath.Location = new System.Drawing.Point(28, 44);
+            this.txtbox_magnetpath.Location = new System.Drawing.Point(12, 27);
             this.txtbox_magnetpath.Name = "txtbox_magnetpath";
             this.txtbox_magnetpath.Size = new System.Drawing.Size(398, 23);
             this.txtbox_magnetpath.TabIndex = 3;
@@ -80,7 +83,7 @@ namespace MagnetLinkConverter
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(28, 26);
+            this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(139, 15);
             this.label1.TabIndex = 4;
@@ -89,7 +92,7 @@ namespace MagnetLinkConverter
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(28, 85);
+            this.label2.Location = new System.Drawing.Point(12, 68);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(154, 15);
             this.label2.TabIndex = 6;
@@ -97,7 +100,7 @@ namespace MagnetLinkConverter
             // 
             // txtbox_torrentpath
             // 
-            this.txtbox_torrentpath.Location = new System.Drawing.Point(28, 103);
+            this.txtbox_torrentpath.Location = new System.Drawing.Point(12, 86);
             this.txtbox_torrentpath.Name = "txtbox_torrentpath";
             this.txtbox_torrentpath.Size = new System.Drawing.Size(398, 23);
             this.txtbox_torrentpath.TabIndex = 5;
@@ -105,7 +108,7 @@ namespace MagnetLinkConverter
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 143);
+            this.label3.Location = new System.Drawing.Point(12, 126);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(190, 15);
             this.label3.TabIndex = 8;
@@ -113,16 +116,55 @@ namespace MagnetLinkConverter
             // 
             // txtbox_downloadpath
             // 
-            this.txtbox_downloadpath.Location = new System.Drawing.Point(28, 161);
+            this.txtbox_downloadpath.Location = new System.Drawing.Point(12, 144);
             this.txtbox_downloadpath.Name = "txtbox_downloadpath";
             this.txtbox_downloadpath.Size = new System.Drawing.Size(398, 23);
             this.txtbox_downloadpath.TabIndex = 7;
+            // 
+            // btnOpenMagnetPath
+            // 
+            this.btnOpenMagnetPath.Image = global::MagnetLinkConverter.Properties.Resources.arrow;
+            this.btnOpenMagnetPath.Location = new System.Drawing.Point(498, 28);
+            this.btnOpenMagnetPath.Name = "btnOpenMagnetPath";
+            this.btnOpenMagnetPath.Size = new System.Drawing.Size(75, 23);
+            this.btnOpenMagnetPath.TabIndex = 9;
+            this.btnOpenMagnetPath.Text = "Go to";
+            this.btnOpenMagnetPath.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnOpenMagnetPath.UseVisualStyleBackColor = true;
+            this.btnOpenMagnetPath.Click += new System.EventHandler(this.btnOpenMagnetPath_Click);
+            // 
+            // btnOpenTorrentFilePath
+            // 
+            this.btnOpenTorrentFilePath.Image = global::MagnetLinkConverter.Properties.Resources.arrow;
+            this.btnOpenTorrentFilePath.Location = new System.Drawing.Point(498, 85);
+            this.btnOpenTorrentFilePath.Name = "btnOpenTorrentFilePath";
+            this.btnOpenTorrentFilePath.Size = new System.Drawing.Size(75, 23);
+            this.btnOpenTorrentFilePath.TabIndex = 10;
+            this.btnOpenTorrentFilePath.Text = "Go to";
+            this.btnOpenTorrentFilePath.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnOpenTorrentFilePath.UseVisualStyleBackColor = true;
+            this.btnOpenTorrentFilePath.Click += new System.EventHandler(this.btnOpenTorrentFilePath_Click);
+            // 
+            // btnOpenDownloadingPath
+            // 
+            this.btnOpenDownloadingPath.Image = global::MagnetLinkConverter.Properties.Resources.arrow;
+            this.btnOpenDownloadingPath.Location = new System.Drawing.Point(498, 143);
+            this.btnOpenDownloadingPath.Name = "btnOpenDownloadingPath";
+            this.btnOpenDownloadingPath.Size = new System.Drawing.Size(75, 23);
+            this.btnOpenDownloadingPath.TabIndex = 11;
+            this.btnOpenDownloadingPath.Text = "Go to";
+            this.btnOpenDownloadingPath.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btnOpenDownloadingPath.UseVisualStyleBackColor = true;
+            this.btnOpenDownloadingPath.Click += new System.EventHandler(this.btnOpenDownloadingPath_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(546, 344);
+            this.ClientSize = new System.Drawing.Size(585, 344);
+            this.Controls.Add(this.btnOpenDownloadingPath);
+            this.Controls.Add(this.btnOpenTorrentFilePath);
+            this.Controls.Add(this.btnOpenMagnetPath);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txtbox_downloadpath);
             this.Controls.Add(this.label2);
@@ -133,7 +175,7 @@ namespace MagnetLinkConverter
             this.Controls.Add(this.btn_torrentpath);
             this.Controls.Add(this.btn_magnetpath);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Magnet link converter";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -150,6 +192,9 @@ namespace MagnetLinkConverter
         private System.Windows.Forms.TextBox txtbox_torrentpath;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtbox_downloadpath;
+        private System.Windows.Forms.Button btnOpenMagnetPath;
+        private System.Windows.Forms.Button btnOpenTorrentFilePath;
+        private System.Windows.Forms.Button btnOpenDownloadingPath;
     }
 }
 
