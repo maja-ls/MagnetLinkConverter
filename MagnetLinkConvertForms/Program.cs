@@ -1,5 +1,5 @@
-using MagnetLinkConvertForms.Code;
-using MagnetLinkConvertForms.Utility;
+using MagnetLinkConverter.Code;
+using MagnetLinkConverter.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MagnetLinkConvertForms
+namespace MagnetLinkConverter
 {
     static class Program
     {
@@ -34,7 +34,7 @@ namespace MagnetLinkConvertForms
                 // Initialize Tray Icon
                 TrayIcon = new NotifyIcon();
 
-                TrayIcon.Icon = MagnetLinkConvertForms.Properties.Resources.magnet;
+                TrayIcon.Icon = MagnetLinkConverter.Properties.Resources.magnet;
 
                 TrayIcon.ContextMenuStrip = PopulateContextMenu();
                 TrayIcon.Text = "Trayicon text";

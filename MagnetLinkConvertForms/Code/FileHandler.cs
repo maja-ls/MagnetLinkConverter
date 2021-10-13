@@ -1,4 +1,4 @@
-﻿using MagnetLinkConvertForms.Utility;
+﻿using MagnetLinkConverter.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MagnetLinkConvertForms.Code
+namespace MagnetLinkConverter.Code
 {
     public class FileHandler
     {

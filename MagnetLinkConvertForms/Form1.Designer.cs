@@ -1,5 +1,5 @@
 ﻿
-namespace MagnetLinkConvertForms
+namespace MagnetLinkConverter
 {
     partial class Form1
     {
