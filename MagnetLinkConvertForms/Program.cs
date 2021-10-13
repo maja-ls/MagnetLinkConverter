@@ -27,7 +27,6 @@ namespace MagnetLinkConvertForms
         public class MyCustomApplicationContext : ApplicationContext
         {
             private NotifyIcon TrayIcon { get; }
-            private Form1 Form { get; }
             private FileHandler FileHandler{ get; }
 
             public MyCustomApplicationContext()
@@ -46,12 +45,13 @@ namespace MagnetLinkConvertForms
                 TrayIcon.DoubleClick += HandleTrayDoubleClick;
 
                 FileHandler = new FileHandler();
-                Form = new Form1(FileHandler);
             }
 
             private void HandleTrayDoubleClick(object sender, EventArgs e)
             {
-                Form.Show();
+                Form1 form = new Form1(FileHandler);
+
+                form.Show();
             }
 
             private void HandleTrayClick(object sender, EventArgs e)

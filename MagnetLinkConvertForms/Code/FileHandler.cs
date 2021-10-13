@@ -18,7 +18,7 @@ namespace MagnetLinkConvertForms.Code
         private static bool _isLocked = false;
         public FileHandler()
         {
-
+            FilePaths = new HashSet<string>();
             Watcher = new FileSystemWatcher();
 
             Watcher.Path = SettingsHelper.Values.MagnetPath;
