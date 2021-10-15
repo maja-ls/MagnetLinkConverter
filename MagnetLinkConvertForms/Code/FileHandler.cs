@@ -18,8 +18,8 @@ namespace MagnetLinkConverter.Code
         private ClientEngine ClientEngine { get; }
         private HashSet<string> FilePaths { get; set; }
 
-        private static object _lock = new object();
-        private static bool _isLocked = false;
+        public FileHandlerStatus Status { get; private set; }
+
         public FileHandler()
         {
             FilePaths = new HashSet<string>();
@@ -30,10 +30,28 @@ namespace MagnetLinkConverter.Code
             Watcher.IncludeSubdirectories = true;
             Watcher.NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.LastWrite;
             Watcher.Filter = "*.magnet";
-            Watcher.Changed += new FileSystemEventHandler(OnChanged);
-            Watcher.Created += new FileSystemEventHandler(OnChanged);
+            Watcher.Changed += new FileSystemEventHandler(OnFilesChanged);
+            Watcher.Created += new FileSystemEventHandler(OnFilesChanged);
 
-            HandleAllMagnetFilesInDirectory();
+            Status = FileHandlerStatus.WatcherStopped;
+        }
+
+        public bool WatcherIsRunning()
+        {
+            return Watcher.EnableRaisingEvents;
+        }
+
+        private bool HandlerIsBusy()
+        {
+            return Status == FileHandlerStatus.ProcessingQueue || Status == FileHandlerStatus.HandlingFiles;
+        }
+
+        private void SetFileHandlerStatusFromWatcherStatus()
+        {
+            if (Watcher.EnableRaisingEvents)
+                Status = FileHandlerStatus.IdleWatching;
+            else
+                Status = FileHandlerStatus.WatcherStopped;
         }
 
         public void StartWatcher()
@@ -41,12 +59,15 @@ namespace MagnetLinkConverter.Code
             if (SettingsHelper.Values.AllSettingsOk())
             {
                 Watcher.EnableRaisingEvents = true;
-                HandleAllMagnetFilesInDirectory();
+                if (!HandlerIsBusy())
+                    Status = FileHandlerStatus.IdleWatching;
             }
         }
         public void StopWatcher()
         {
             Watcher.EnableRaisingEvents = false;
+            if (!HandlerIsBusy())
+                Status = FileHandlerStatus.WatcherStopped;
         }
 
         public void UpdateWatcher()
@@ -56,72 +77,77 @@ namespace MagnetLinkConverter.Code
             StartWatcher();
         }
 
-        private void OnChanged(object sender, FileSystemEventArgs e)
+        private async void OnFilesChanged(object sender, FileSystemEventArgs e)
         {
-            HandleAllMagnetFilesInDirectory();
+            await HandleAllMagnetFilesInDirectory();
         }
 
-        private void HandleAllMagnetFilesInDirectory()
+        private async Task HandleAllMagnetFilesInDirectory()
         {
-            if (!_isLocked)
+            if (!HandlerIsBusy())
             {
-                _isLocked = true;
-                lock (_lock)
+                Status = FileHandlerStatus.HandlingFiles;
+
+
+                var magnetfiles = Directory.GetFiles(SettingsHelper.Values.MagnetPath, "*.magnet", SearchOption.AllDirectories);
+
+                foreach (var f in magnetfiles)
                 {
-
-                    var magnetfiles = Directory.GetFiles(SettingsHelper.Values.MagnetPath, "*.magnet");
-                    foreach (var f in magnetfiles)
+                    if (!FilePaths.Contains(f))
                     {
-                        if (!FilePaths.Contains(f))
-                        {
-                            FilePaths.Add(f);
-                        }
+                        FilePaths.Add(f);
                     }
-
                 }
-                _isLocked = false;
-                ProcessFileQueue();
+
+
+                SetFileHandlerStatusFromWatcherStatus();
+
+                await ProcessFileQueue();
             }
             else
             {
-                Wait(2);
-                HandleAllMagnetFilesInDirectory();
+                Wait(120);
+                await HandleAllMagnetFilesInDirectory();
             }
         }
 
-        private void ProcessFileQueue()
+        private async Task ProcessFileQueue()
         {
-            if (!_isLocked)
+            if (!HandlerIsBusy())
             {
-                _isLocked = true;
-                lock (_lock)
+                Status = FileHandlerStatus.ProcessingQueue;
+
+
+                var pathList = FilePaths.ToList();
+                if (pathList.Count > 0)
                 {
 
-                    var pathList = FilePaths.ToList();
-                    if (pathList.Count > 0)
+                    foreach (var f in pathList)
                     {
-
-                        foreach (var f in pathList)
+                        // DO TORRENT SHIT HERE!!!
+                        MagnetLink ml = GetMagnetLink(f);
+                        TorrentManager manager = new TorrentManager(ml, SettingsHelper.Values.TorrentFilePath, new TorrentSettings(), SettingsHelper.Values.TorrentFilePath);
+                        await ClientEngine.Register(manager);
+                        await manager.StartAsync();
+                        manager.TorrentStateChanged += TorrentStateChanged;
+                        while (!manager.HasMetadata)
                         {
-                            // DO TORRENT SHIT HERE!!!
-                            MagnetLink ml = GetMagnetLink(f);
-                            TorrentManager manager = new TorrentManager(ml, SettingsHelper.Values.TorrentDownloadingPath, new TorrentSettings(), SettingsHelper.Values.TorrentFilePath);
-                            ClientEngine.Register(manager);
-                            manager.StartAsync();
-                            manager.TorrentStateChanged += TorrentStateChanged;
-
-                            // remove path from FilePaths
-                            FilePaths.Remove(f);
-                            File.Delete(f);
+                            Wait(10);
                         }
+                        // remove path from FilePaths
+                        //Wait(20); // denne er kanskje unødvendig med loopen over
+                        FilePaths.Remove(f);
+                        File.Delete(f);
                     }
                 }
-                _isLocked = false;
+
+                SetFileHandlerStatusFromWatcherStatus();
+
             }
             else
             {
-                Wait(2);
-                ProcessFileQueue();
+                Wait(120);
+                await ProcessFileQueue();
             }
 
         }
@@ -129,13 +155,13 @@ namespace MagnetLinkConverter.Code
         private async void TorrentStateChanged(object sender, TorrentStateChangedEventArgs e)
         {
 
-            if(e.OldState == TorrentState.Metadata && e.NewState == TorrentState.Starting)
+            if (e.OldState == TorrentState.Metadata && e.NewState == TorrentState.Starting)
             {
                 await e.TorrentManager.StopAsync();
                 await ClientEngine.Unregister(e.TorrentManager);
                 e.TorrentManager.Dispose();
             }
-            
+
         }
 
         private MagnetLink GetMagnetLink(string f)
@@ -149,11 +175,19 @@ namespace MagnetLinkConverter.Code
             return null;
         }
 
-        private void Wait(int minutes)
+        private void Wait(int seconds)
         {
-            Thread.Sleep(minutes * 1000);
+            Thread.Sleep(seconds * 1000);
         }
 
 
+    }
+
+    public enum FileHandlerStatus
+    {
+        WatcherStopped,
+        IdleWatching,
+        HandlingFiles,
+        ProcessingQueue
     }
 }

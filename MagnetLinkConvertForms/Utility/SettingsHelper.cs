@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace MagnetLinkConverter.Utility
 {
-    class SettingsHelper
+    public static class SettingsHelper
     {
         private static readonly string _fileName = "magnetlinkconverter_settings.xml";
 
@@ -17,7 +17,6 @@ namespace MagnetLinkConverter.Utility
         private const string _xmlMagnetLinkConverter = "magnetlinkconverter";
         private const string _xmlMagnetPath = "magnetpath";
         private const string _xmlTorrentFilePath = "torrentfilepath";
-        private const string _xmlTorrentDownloadingPath = "downloadingpath";
 
 
         private static SettingsValues _values;
@@ -38,7 +37,6 @@ namespace MagnetLinkConverter.Utility
                 writer.WriteStartElement(_xmlMagnetLinkConverter);
                 writer.WriteElementString(_xmlMagnetPath, Values.MagnetPath);
                 writer.WriteElementString(_xmlTorrentFilePath, Values.TorrentFilePath);
-                writer.WriteElementString(_xmlTorrentDownloadingPath, Values.TorrentDownloadingPath);
                 writer.WriteEndElement();
                 writer.Flush();
             }
@@ -64,9 +62,6 @@ namespace MagnetLinkConverter.Utility
                         case _xmlTorrentFilePath:
                             values.TorrentFilePath = child.InnerText;
                             break;
-                        case _xmlTorrentDownloadingPath:
-                            values.TorrentDownloadingPath = child.InnerText;
-                            break;
                     }
                 }
 
@@ -83,11 +78,10 @@ namespace MagnetLinkConverter.Utility
     {
         public string MagnetPath { get; set; }
         public string TorrentFilePath { get; set; }
-        public string TorrentDownloadingPath { get; set; }
 
         public bool AllSettingsOk()
         {
-            return Directory.Exists(MagnetPath) && Directory.Exists(TorrentFilePath) && Directory.Exists(TorrentDownloadingPath);
+            return Directory.Exists(MagnetPath) && Directory.Exists(TorrentFilePath);
         }
     }
 }

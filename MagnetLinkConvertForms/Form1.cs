@@ -18,15 +18,14 @@ namespace MagnetLinkConverter
 
         private string MagnetPath { get; set; }
         private string TorrentPath { get; set; }
-        private string DownloadPath { get; set; }
 
         private FileHandler FileHandler { get; }
+        private NotificationHelper NotificationHelper { get; }
 
-        public Form1(FileHandler fileHandler)
+        public Form1(FileHandler fileHandler, NotificationHelper notificationHelper)
         {
             InitializeComponent();
             FileHandler = fileHandler;
-            txtbox_downloadpath.Enabled = false;
             txtbox_magnetpath.Enabled = false;
             txtbox_torrentpath.Enabled = false;
 
@@ -34,10 +33,8 @@ namespace MagnetLinkConverter
 
             MagnetPath = settings.MagnetPath;
             TorrentPath = settings.TorrentFilePath;
-            DownloadPath = settings.TorrentDownloadingPath;
             txtbox_magnetpath.Text = MagnetPath;
             txtbox_torrentpath.Text = TorrentPath;
-            txtbox_downloadpath.Text = DownloadPath;
         }
 
         private void SaveSettings()
@@ -53,11 +50,7 @@ namespace MagnetLinkConverter
                 changed = true;
                 SettingsHelper.Values.TorrentFilePath = TorrentPath;
             }
-            if (SettingsHelper.Values.TorrentDownloadingPath != DownloadPath)
-            {
-                changed = true;
-                SettingsHelper.Values.TorrentDownloadingPath = DownloadPath;
-            }
+
             if (changed)
             {
                 SettingsHelper.WriteSettings();
@@ -99,33 +92,24 @@ namespace MagnetLinkConverter
             txtbox_torrentpath.Text = path;
             TorrentPath = path;
             SaveSettings();
-
         }
-        private void download_Path_Click(object sender, EventArgs e)
-        {
-            string path = GetDirectoryPath(DownloadPath);
-            txtbox_downloadpath.Text = path;
-            DownloadPath = path;
-            SaveSettings();
 
-        }
 
         private void btnOpenMagnetPath_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(MagnetPath))
-                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @MagnetPath);
+            OpenDirInExplorer(MagnetPath);
         }
 
         private void btnOpenTorrentFilePath_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(TorrentPath))
-                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @TorrentPath);
+            OpenDirInExplorer(TorrentPath);
         }
 
-        private void btnOpenDownloadingPath_Click(object sender, EventArgs e)
+        private void OpenDirInExplorer(string path)
         {
-            if (Directory.Exists(DownloadPath))
-                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @DownloadPath);
+            if (Directory.Exists(path))
+                System.Diagnostics.Process.Start(Environment.GetEnvironmentVariable("WINDIR") + @"\explorer.exe", @path);
         }
+
     }
 }

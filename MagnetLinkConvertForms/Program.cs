@@ -21,16 +21,19 @@ namespace MagnetLinkConverter
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MyCustomApplicationContext());
+            Application.Run(new MagnetLinkConverterContext());
         }
 
-        public class MyCustomApplicationContext : ApplicationContext
+        public class MagnetLinkConverterContext : ApplicationContext
         {
             private NotifyIcon TrayIcon { get; }
-            private FileHandler FileHandler{ get; }
+            private FileHandler FileHandler { get; }
+            private NotificationHelper NotificationHelper { get; }
 
-            public MyCustomApplicationContext()
+            public MagnetLinkConverterContext()
             {
+
+
                 // Initialize Tray Icon
                 TrayIcon = new NotifyIcon();
 
@@ -45,11 +48,18 @@ namespace MagnetLinkConverter
                 TrayIcon.DoubleClick += HandleTrayDoubleClick;
 
                 FileHandler = new FileHandler();
+
+                NotificationHelper = new NotificationHelper(FileHandler);
+
+
+                FileHandler.StartWatcher();
+
+
             }
 
             private void HandleTrayDoubleClick(object sender, EventArgs e)
             {
-                Form1 form = new Form1(FileHandler);
+                Form1 form = new Form1(FileHandler, NotificationHelper);
 
                 form.Show();
             }
@@ -75,7 +85,7 @@ namespace MagnetLinkConverter
                 Application.Exit();
             }
 
-            
+
         }
     }
 }
