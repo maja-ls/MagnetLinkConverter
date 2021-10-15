@@ -18,14 +18,13 @@ namespace MagnetLinkConverter
 
         private string MagnetPath { get; set; }
         private string TorrentPath { get; set; }
+        private Action UpdateFileWatcher { get; }
 
-        private FileHandler FileHandler { get; }
         private NotificationHelper NotificationHelper { get; }
 
-        public Form1(FileHandler fileHandler, NotificationHelper notificationHelper)
+        public Form1(NotificationHelper notificationHelper, Action updateFileWatcher)
         {
             InitializeComponent();
-            FileHandler = fileHandler;
             txtbox_magnetpath.Enabled = false;
             txtbox_torrentpath.Enabled = false;
 
@@ -35,6 +34,8 @@ namespace MagnetLinkConverter
             TorrentPath = settings.TorrentFilePath;
             txtbox_magnetpath.Text = MagnetPath;
             txtbox_torrentpath.Text = TorrentPath;
+
+            UpdateFileWatcher = updateFileWatcher;
         }
 
         private void SaveSettings()
@@ -54,7 +55,7 @@ namespace MagnetLinkConverter
             if (changed)
             {
                 SettingsHelper.WriteSettings();
-                FileHandler.UpdateWatcher();
+                UpdateFileWatcher();
             }
         }
 

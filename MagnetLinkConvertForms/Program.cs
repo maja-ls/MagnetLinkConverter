@@ -49,7 +49,7 @@ namespace MagnetLinkConverter
 
                 FileHandler = new FileHandler();
 
-                NotificationHelper = new NotificationHelper(FileHandler);
+                NotificationHelper = new NotificationHelper(FileHandler, TrayIcon);
 
 
                 FileHandler.StartWatcher();
@@ -59,7 +59,7 @@ namespace MagnetLinkConverter
 
             private void HandleTrayDoubleClick(object sender, EventArgs e)
             {
-                Form1 form = new Form1(FileHandler, NotificationHelper);
+                Form1 form = new Form1(NotificationHelper, FileHandler.UpdateWatcher);
 
                 form.Show();
             }
