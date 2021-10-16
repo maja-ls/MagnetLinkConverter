@@ -36,24 +36,12 @@ namespace MagnetLinkConverter
 
                 // Initialize Tray Icon
                 TrayIcon = new NotifyIcon();
+                InitTrayIcon();
 
-                TrayIcon.Icon = MagnetLinkConverter.Properties.Resources.magnet;
+                NotificationHelper = new NotificationHelper(TrayIcon);
 
-                TrayIcon.ContextMenuStrip = PopulateContextMenu();
-                TrayIcon.Text = "Trayicon text";
-                //trayIcon.BalloonTipText = "Trayicon balloontext";
-                TrayIcon.Visible = true;
-                //trayIcon.Click += (object sender, EventArgs e) => { trayIcon.ShowBalloonTip(1000); };
-                TrayIcon.Click += HandleTrayClick;
-                TrayIcon.DoubleClick += HandleTrayDoubleClick;
-
-                FileHandler = new FileHandler();
-
-                NotificationHelper = new NotificationHelper(FileHandler, TrayIcon);
-
-
+                FileHandler = new FileHandler(NotificationHelper);
                 FileHandler.StartWatcher();
-
 
             }
 
@@ -70,11 +58,17 @@ namespace MagnetLinkConverter
 
             }
 
-            private ContextMenuStrip PopulateContextMenu()
+            private void InitTrayIcon()
             {
+                TrayIcon.Icon = MagnetLinkConverter.Properties.Resources.magnet;
+
                 var strip = new ContextMenuStrip();
-                strip.Items.Add("Exit", null, Exit);
-                return strip;
+                strip.Items.Add("Quit", null, Exit);
+
+                TrayIcon.ContextMenuStrip = strip;
+                TrayIcon.Visible = true;
+                TrayIcon.Click += HandleTrayClick;
+                TrayIcon.DoubleClick += HandleTrayDoubleClick;
             }
 
             void Exit(object sender, EventArgs e)

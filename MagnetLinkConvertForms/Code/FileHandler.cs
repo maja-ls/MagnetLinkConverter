@@ -17,10 +17,21 @@ namespace MagnetLinkConverter.Code
         private FileSystemWatcher Watcher { get; }
         private ClientEngine ClientEngine { get; }
         private HashSet<string> FilePaths { get; set; }
+        private NotificationHelper NotificationHelper { get; }
 
-        public FileHandlerStatus Status { get; private set; }
 
-        public FileHandler()
+        public FileHandlerStatus _status;
+        public FileHandlerStatus Status { 
+            get { 
+                return _status;
+            }
+            private set { 
+                _status = value;
+                NotificationHelper.UpdateFileHandlerStatus(_status);
+            } 
+        }
+
+        public FileHandler(NotificationHelper notificationHelper)
         {
             FilePaths = new HashSet<string>();
             Watcher = new FileSystemWatcher();
@@ -32,6 +43,9 @@ namespace MagnetLinkConverter.Code
             Watcher.Filter = "*.magnet";
             Watcher.Changed += new FileSystemEventHandler(OnFilesChanged);
             Watcher.Created += new FileSystemEventHandler(OnFilesChanged);
+
+
+            NotificationHelper = notificationHelper;
 
             Status = FileHandlerStatus.WatcherStopped;
         }
@@ -106,7 +120,7 @@ namespace MagnetLinkConverter.Code
             }
             else
             {
-                Wait(120);
+                Wait(123);
                 await HandleAllMagnetFilesInDirectory();
             }
         }
@@ -130,12 +144,12 @@ namespace MagnetLinkConverter.Code
                         await ClientEngine.Register(manager);
                         await manager.StartAsync();
                         manager.TorrentStateChanged += TorrentStateChanged;
-                        while (!manager.HasMetadata)
+                        int attempts = 0;
+                        while (!manager.HasMetadata && attempts < 5) // wait and see if we can fetch torrent file for 5~ minutes before adding next magnet
                         {
-                            Wait(10);
+                            attempts++;
+                            Wait(60);
                         }
-                        // remove path from FilePaths
-                        //Wait(20); // denne er kanskje unødvendig med loopen over
                         FilePaths.Remove(f);
                         File.Delete(f);
                     }
@@ -146,7 +160,7 @@ namespace MagnetLinkConverter.Code
             }
             else
             {
-                Wait(120);
+                Wait(121);
                 await ProcessFileQueue();
             }
 
